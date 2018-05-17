@@ -1,0 +1,67 @@
+import processing.serial.*;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+Serial port;
+Robot robot;
+
+String data;
+
+int A = 0;
+int D = 0;
+int S = 0;
+int shift = 0;
+
+void setup() {
+  try {
+    robot = new Robot();
+  }
+  catch (Exception e) {
+    e.printStackTrace();
+    exit();
+  }
+  
+  delay(2000);
+  
+  port = new Serial(this, "COM3", 9600); //port of arduino
+  port.bufferUntil('.');
+}
+
+void draw() {
+  background(0,0,0);
+  fill(255, 255, 255);
+  
+
+
+ if (A == 1) robot.keyPress(KeyEvent.VK_A);
+   else robot.keyRelease(KeyEvent.VK_A);
+   
+ if (D == 1) robot.keyPress(KeyEvent.VK_D);
+   else robot.keyRelease(KeyEvent.VK_D);
+   
+ if (S == 1) robot.keyPress(KeyEvent.VK_S);
+   else robot.keyRelease(KeyEvent.VK_S);
+   
+ if (shift == 1) robot.keyPress(KeyEvent.VK_SHIFT);
+   else robot.keyRelease(KeyEvent.VK_SHIFT);
+
+}
+
+void serialEvent (Serial port){
+ data = port.readStringUntil('.');
+ int i = data.length();
+ if (i > 1){
+   S = int(data.substring(i-2, i));
+   if (i > 3) {
+     D = int(data.substring(i-4, i-3));
+     if (i > 4){
+       A = int(data.substring(i-5, i-4));
+       if (i > 5){
+         shift = int(data.substring(i-6, i-5));
+       }
+     }
+   }
+ }
+ 
+}
